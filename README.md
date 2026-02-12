@@ -398,14 +398,6 @@ SOFTWARE.
 
 ---
 
-## 📞 联系方式
-
-- **项目主页:** [https://github.com/yourusername/anyrange](https://github.com/yourusername/anyrange)
-- **问题反馈:** [GitHub Issues](https://github.com/yourusername/anyrange/issues)
-- **功能建议:** [GitHub Discussions](https://github.com/yourusername/anyrange/discussions)
-
----
-
 <div align="center">
 
 **如果觉得这个项目有帮助，请给一个 ⭐ Star！**
