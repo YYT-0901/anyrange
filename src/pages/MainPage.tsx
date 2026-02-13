@@ -20,6 +20,7 @@ export default function MainPage() {
   
   const [unranked, setUnranked] = useState<TierItem[]>([])
   const [activeItem, setActiveItem] = useState<TierItem | null>(null)
+  const [isDraggingFile, setIsDraggingFile] = useState(false)
   const tierListRef = useRef<HTMLDivElement>(null)
 
   const sensors = useSensors(
@@ -36,13 +37,13 @@ export default function MainPage() {
     })
   )
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (!files) return
-
+  const processFiles = (files: FileList) => {
     const newItems: TierItem[] = []
+    const fileArray = Array.from(files).filter(file => file.type.startsWith('image/'))
     
-    Array.from(files).forEach((file) => {
+    if (fileArray.length === 0) return
+    
+    fileArray.forEach((file) => {
       const reader = new FileReader()
       reader.onload = (e) => {
         const url = e.target?.result as string
@@ -51,12 +52,47 @@ export default function MainPage() {
           url,
         })
         
-        if (newItems.length === files.length) {
+        if (newItems.length === fileArray.length) {
           setUnranked((prev) => [...prev, ...newItems])
         }
       }
       reader.readAsDataURL(file)
     })
+  }
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (!files) return
+    processFiles(files)
+  }
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (e.dataTransfer.types.includes('Files')) {
+      setIsDraggingFile(true)
+    }
+  }
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (e.currentTarget === e.target) {
+      setIsDraggingFile(false)
+    }
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDraggingFile(false)
+    
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      processFiles(files)
+    }
   }
 
   const findContainer = (id: string): { type: 'tier' | 'unranked'; tierId?: string } => {
@@ -239,7 +275,12 @@ export default function MainPage() {
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="h-screen flex flex-col p-2 sm:p-4 gap-2 sm:gap-4">
+      <div 
+        className="h-screen flex flex-col p-2 sm:p-4 gap-2 sm:gap-4 relative"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
         <div 
           ref={tierListRef}
           className="flex-1 bg-[#e0e5ec] rounded-2xl sm:rounded-3xl p-2 sm:p-4 overflow-hidden"
@@ -347,6 +388,26 @@ export default function MainPage() {
       </div>
 
       <TrashBin isVisible={activeItem !== null} />
+
+      {/* File Drop Overlay */}
+      {isDraggingFile && (
+        <div className="fixed inset-0 bg-[#5b8fb9] bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 pointer-events-none">
+          <div 
+            className="bg-[#e0e5ec] rounded-3xl p-12 text-center max-w-md mx-4"
+            style={{
+              boxShadow: '12px 12px 24px #a3b1c6, -12px -12px 24px #ffffff'
+            }}
+          >
+            <Upload size={64} className="mx-auto mb-4 text-[#5b8fb9]" />
+            <h3 className="text-2xl font-bold text-[#5b8fb9] mb-2">
+              拖放图片到这里
+            </h3>
+            <p className="text-[#7a9bb8]">
+              支持批量上传多张图片
+            </p>
+          </div>
+        </div>
+      )}
 
       <DragOverlay>
         {activeItem ? (
