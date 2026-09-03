@@ -1,6 +1,6 @@
 <div align="center">
 
-<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=116061978498494&bvid=BV13xc7zpE9D&cid=36030644875&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+[![Bilibili 视频]](https://www.bilibili.com/video/BV13xc7zpE9D/)
 
 # anyrange 夯到拉
 
