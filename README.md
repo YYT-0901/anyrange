@@ -1,7 +1,5 @@
 <div align="center">
 
-[![Bilibili 视频]](https://www.bilibili.com/video/BV13xc7zpE9D/)
-
 # anyrange 夯到拉
 
 **anyrange** - 从"夯"(最好) 到 "拉"(最差)
